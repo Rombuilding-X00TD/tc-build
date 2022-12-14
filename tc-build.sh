@@ -51,7 +51,7 @@ tg_post_msg "<b>$LLVM_NAME: Toolchain Compilation Started</b>%0A<b>Date : </b><c
 # Build LLVM
 msg "$LLVM_NAME: Building LLVM..."
 tg_post_msg "<b>$LLVM_NAME: Building LLVM. . .</b>"
-./build-llvm.py \
+CC=clang CXX=clang++ ./build-llvm.py \
 	--incremental \
 	--shallow-clone \
 	--clang-vendor "$LLVM_NAME" \
