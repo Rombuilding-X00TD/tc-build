@@ -57,10 +57,18 @@ CC=clang CXX=clang++ ./build-llvm.py \
 	--clang-vendor "$LLVM_NAME" \
 	--defines "LLVM_PARALLEL_COMPILE_JOBS=$(nproc) LLVM_PARALLEL_LINK_JOBS=$(nproc) CMAKE_C_FLAGS=-O3 CMAKE_CXX_FLAGS=-O3 LLVM_USE_LINKER=lld LLVM_ENABLE_LLD=ON" \
 	--projects "clang;lld;polly" \
-	--targets "ARM;AArch64" \
+	--targets "ARM;AArch64;X86" \
+	--shallow-clone \
 	--quiet-cmake \
 	--assertions \
-	--build-type "Release"
+	--build-type "Release" 2>&1 | tee build.log
+
+# Check if the final clang binary exists or not.
+[ ! -f install/bin/clang-1* ] && {
+	err "Building LLVM failed ! Kindly check errors !!"
+	tg_post_build "build.log" "$TG_CHAT_ID" "Error Log"
+	exit 1
+}
 
 # Build binutils
 msg "$LLVM_NAME: Building binutils..."
