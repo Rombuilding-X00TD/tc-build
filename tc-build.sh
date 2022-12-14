@@ -111,9 +111,7 @@ git commit -asm "$LLVM_NAME Clang: Bump to $rel_date build
 
 LLVM commit: $llvm_commit_url
 Clang Version: $clang_version
-Binutils version: $binutils_ver
-Builder commit: https://github.com/Rombuilding-X00TD/tc-build/commit/$builder_commit"
-
+Binutils version: $binutils_ver"
 git push -f
 popd || exit
 
