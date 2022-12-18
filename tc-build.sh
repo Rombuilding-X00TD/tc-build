@@ -31,12 +31,19 @@ tg_post_msg() {
 	-d "parse_mode=html" \
 	-d text="$1"
 }
+
 tg_post_build() {
 	curl --progress-bar -F document=@"$1" "$BOT_MSG_URL" \
 	-F chat_id="$TG_CHAT_ID"  \
 	-F "disable_web_page_preview=true" \
 	-F "parse_mode=html" \
 	-F caption="$3"
+}
+
+tg_post_erlog() {
+    curl -F document=@"build.log" "https://api.telegram.org/bot$TG_TOKEN/sendDocument" \
+        -F chat_id="$TG_CHAT_ID" \
+        -F caption="Build ran into errors, plox check logs"
 }
 
 # Build Info
@@ -64,11 +71,13 @@ CC=clang CXX=clang++ ./build-llvm.py \
 	--build-type "Release" 2>&1 | tee build.log
 
 # Check if the final clang binary exists or not.
-[ ! -f install/bin/clang-1* ] && {
-	err "Building LLVM failed ! Kindly check errors !!"
-	tg_post_build "build.log" "$TG_CHAT_ID" "Error Log"
-	exit 1
-}
+for clang in install/bin/clang-1*; do
+    if [ ! -f "$clang" ]; then
+        err "Building LLVM failed ! Kindly check errors !!"
+        tg_post_erlog
+        exit 1
+    fi
+done
 
 # Build binutils
 msg "$LLVM_NAME: Building binutils..."
