@@ -6,7 +6,7 @@ on:
     - cron: '0 0 * * *'
 
 env:
-    GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+    GIT_TOKEN: ${{ secrets.GITLAB_TOKEN }}
     TELEGRAM_CHAT: ${{ secrets.TELEGRAM_CHAT }}
     TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
   
