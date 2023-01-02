@@ -11,7 +11,7 @@ err() {
 }
 
 # Environment checker
-if [ -z "$GIT_TOKEN" ]; then
+if [ -z "$GITLAB_TOKEN" ]; then
     err "* Environment has missing"
     exit
 fi
@@ -133,7 +133,7 @@ push() {
     popd || exit
 
     # Clone Repo
-    git clone "https://STRK-ND:$GIT_TOKEN@github.com/STRK-ND/KryptoNite-Clang.git" rel_repo
+    git clone "https://STRK-ND:$GITLAB_TOKEN@github.com/STRK-ND/KryptoNite-Clang.git" rel_repo
     pushd rel_repo || exit
     if [ -d "Good revision" ]; then
         echo "${ClangLink}" > "Good revision"/link.txt
@@ -150,9 +150,9 @@ push() {
     git push -f origin "${Tags}"
     popd || exit
 
-    chmod +x github-release
+    chmod +x gitlab-release
     ./github-release release \
-        --security-token "$GIT_TOKEN" \
+        --security-token "$GITLAB_TOKEN" \
         --user STRK-ND \
         --repo KryptoNite-Clang \
         --tag "${Tags}" \
@@ -160,8 +160,8 @@ push() {
         --description "$(cat install/README.md)"
 
     fail="n"
-    ./github-release upload \
-        --security-token "$GIT_TOKEN" \
+    ./gitlab-release upload \
+        --security-token "$GITLAB_TOKEN" \
         --user STRK-ND \
         --repo KryptoNite-Clang \
         --tag "${Tags}" \
@@ -171,8 +171,8 @@ push() {
     TotalTry="0"
     UploadAgain()
     {
-        GetRelease="$(./github-release upload \
-            --security-token "$GIT_TOKEN" \
+        GetRelease="$(./gitlab-release upload \
+            --security-token "$GITLAB_TOKEN" \
             --user STRK-ND \
             --repo KryptoNite-Clang \
             --tag "${Tags}" \
