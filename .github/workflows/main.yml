@@ -1,10 +1,15 @@
-name: WeebX Clang
+
+name: WeebX Clang Latest
 
 on:
-  workflow_dispatch:
+  push:
+  schedule:
+    - cron: '0 0 * * *'
 
 env:
-    GIT_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+    GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+    TELEGRAM_CHAT: ${{ secrets.TELEGRAM_CHAT }}
+    TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
   
 jobs:
   Build:
