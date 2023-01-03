@@ -7,6 +7,8 @@ on:
 
 env:
     GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+    CHATID: ${{ secrets.CHATID }}
+    TOKEN: ${{ secrets.TOKEN }}
   
 jobs:
   goBuild:
