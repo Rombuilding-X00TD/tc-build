@@ -46,7 +46,7 @@ builder_commit="$(git rev-parse HEAD)"
 START=$(date +"%s")
 
 # Send a notificaton to TG
-tg_post_msg "<b>Elastics Clang Compilation Started</b>%0A<b>Vendor : </b><code>$LLVM_NAME clang</code>%0A<b>Toolchain Script Commit : </b><code>$builder_commit</code>%0A<b>Build Date : </b><code>$rel_friendly_date</code>"
+tg_post_msg "<b>KryptoNite Clang Compilation Started</b>%0A<b>Vendor : </b><code>$LLVM_NAME clang</code>%0A<b>Toolchain Script Commit : </b><code>$builder_commit</code>%0A<b>Build Date : </b><code>$rel_friendly_date</code>"
 
 # Build LLVM
 msg "Building LLVM..."
