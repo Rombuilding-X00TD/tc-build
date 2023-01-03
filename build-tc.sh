@@ -11,7 +11,7 @@ err() {
 }
 
 # Environment checker
-if [ -z "$1" ] || [ -z "$GIT_TOKEN" ] || [ -z "$TELEGRAM_TOKEN" ] || [ -z "$TELEGRAM_CHAT" ]; then
+if [ -z "$GITLAB_TOKEN" ]; then
     err "* Environment has missing"
     exit
 fi
