@@ -78,13 +78,13 @@ build() {
         fi
     done
 
-    # Start build binutils
-    msg "Building binutils"
+# Build binutils
+msg "Building binutils..."
 ./build-binutils.py --targets arm aarch64
 
-    # Remove unused products
-    rm -fr install/include
-    rm -f install/lib/*.a install/lib/*.la
+# Remove unused products
+rm -fr install/include
+rm -f install/lib/*.a install/lib/*.la
 
 # Strip remaining products
 for f in $(find install -type f -exec file {} \; | grep 'not stripped' | awk '{print $1}'); do
@@ -100,7 +100,6 @@ for bin in $(find install -mindepth 2 -maxdepth 3 -type f -exec file {} \; | gre
 	patchelf --set-rpath "$DIR/install/lib" "$bin"
 done
 
-push() {
 # Release Info
 pushd llvm-project || exit
 llvm_commit="$(git rev-parse HEAD)"
