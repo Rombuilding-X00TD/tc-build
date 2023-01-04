@@ -115,10 +115,10 @@ clang_version="$(install/bin/clang --version | head -n1 | cut -d' ' -f4)"
 tg_post_msg "<b>Pushed to Repository Started...</b>%0A<b>Clang Version : </b><code>$clang_version</code>%0A<b>Binutils Version : </b><code>$binutils_ver</code>%0A<b>LLVM Commit: </b><code>$llvm_commit_url</code>%0A<b>Builder Commit: </b><code>https://github.com/Rombuilding-X00TD/tc-build/commit/$builder_commit</code>%0A<b>KryptoNite Clang Bump to: </b><code>$rel_date build</code>"
 
 # Git repository
-git config --global user.email "$GH_EMAIL"
-git config --global user.name "$GH_USERNAME"
+git config --global user.email "$GITLAB_TOKEN_EMAIL"
+git config --global user.name "$GITLAB_TOKEN_USERNAME"
 
-git clone "https://STRK-ND:$GL_TOKEN@$GL_PUSH_REPO_URL" rel_repo
+git clone "https://STRK-ND:$GITLAB_TOKEN_TOKEN@$GITLAB_TOKEN_PUSH_REPO_URL" rel_repo
 pushd rel_repo || exit
 rm -fr ./*
 cp -r ../install/* .
