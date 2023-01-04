@@ -8,7 +8,7 @@
 # GH_EMAIL | Your Github Email
 # GH_TOKEN | Your Github Token ( repo & repo_hook )
 # GL_TOKEN | Your GitLab Token (read_user, read_repository, write_repository)
-# GH_PUSH_REPO_URL | Your GitHub Repository for store compiled Toolchain ( without https:// or www. ) ex. github.com/cbendot/elastics-clang.git
+# GH_PUSH_REPO_URL | Your GitHub Repository for store compiled Toolchain ( without https:// or www. )
 # GL_PUSH_REPO_URL | Your GitLab Repository
 
 # Function to show an informational message
@@ -19,6 +19,14 @@ msg() {
 err() {
     echo -e "\e[1;41m$*\e[0m"
 }
+
+# Clone source
+git clone --depth=1 https://github.com/ClangBuiltLinux/tc-build clang
+mv github-release clang
+cd clang
+
+# Install dependency
+bash ci.sh deps
 
 # Set a directory
 DIR="$(pwd ...)"
@@ -52,11 +60,13 @@ tg_post_msg "<b>KryptoNite Clang Compilation Started</b>%0A<b>Vendor : </b><code
 msg "Building LLVM..."
 tg_post_msg "<b>Building LLVM...</b>"
 ./build-llvm.py \
+	--ccache \
+	--incremental \
+	--shallow-clone \
 	--clang-vendor "$LLVM_NAME" \
+	--defines "LLVM_PARALLEL_COMPILE_JOBS=$(nproc) LLVM_PARALLEL_LINK_JOBS=$(nproc) CMAKE_C_FLAGS=-O3 CMAKE_CXX_FLAGS=-O3" \
 	--projects "clang;lld;polly" \
 	--targets "ARM;AArch64" \
-	--shallow-clone \
-	--incremental \
 	--build-type "Release" 2>&1 | tee build.log
 
 # Check if the final clang binary exists or not.
@@ -69,7 +79,11 @@ tg_post_msg "<b>Building LLVM...</b>"
 # Build binutils
 msg "Building Binutils..."
 tg_post_msg "<b>Building Binutils...</b>"
-./build-binutils.py --targets arm aarch64
+./build-binutils.py \
+	--ccache \
+	--incremental \
+	--shallow-clone \
+	--build-type "Release"
 
 # Remove unused products
 rm -fr install/include
@@ -99,12 +113,11 @@ llvm_commit_url="https://github.com/llvm/llvm-project/commit/$short_llvm_commit"
 binutils_ver="$(ls | grep "^binutils-" | sed "s/binutils-//g")"
 clang_version="$(install/bin/clang --version | head -n1 | cut -d' ' -f4)"
 
-tg_post_msg "<b>Pushed to Repository Started...</b>%0A<b>Clang Version : </b><code>$clang_version</code>%0A<b>Binutils Version : </b><code>$binutils_ver</code>%0A<b>LLVM Commit: </b><code>$llvm_commit_url</code>%0A<b>Builder Commit: </b><code>https://github.com/STRK-ND/tcbuild/commit/$builder_commit</code>%0A<b>KryptoNite Clang Bump to: </b><code>$rel_date build</code>"
+tg_post_msg "<b>Pushed to Repository Started...</b>%0A<b>Clang Version : </b><code>$clang_version</code>%0A<b>Binutils Version : </b><code>$binutils_ver</code>%0A<b>LLVM Commit: </b><code>$llvm_commit_url</code>%0A<b>Builder Commit: </b><code>https://github.com/Rombuilding-X00TD/tc-build/commit/$builder_commit</code>%0A<b>KryptoNite Clang Bump to: </b><code>$rel_date build</code>"
 
-# Push to GitHub
-# Update Git repository
-  git config --global user.email "raj15400881@gmail.com"
-  git config --global user.name "STRK-ND"
+# Git repository
+git config --global user.email "$GH_EMAIL"
+git config --global user.name "$GH_USERNAME"
 
 git clone "https://STRK-ND:$GL_TOKEN@$GL_PUSH_REPO_URL" rel_repo
 pushd rel_repo || exit
@@ -117,7 +130,7 @@ git commit -asm "$LLVM_NAME Clang: Bump to $rel_date build
 LLVM commit: $llvm_commit_url
 Clang Version: $clang_version
 Binutils version: $binutils_ver
-Builder commit: https://github.com/STRK-ND/tcbuild/commit/$builder_commit"
+Builder commit: https://github.com/Rombuilding-X00TD/tc-build/commit/$builder_commit"
 
 # Downgrade the HTTP version to 1.1
 git config --global http.version HTTP/1.1
