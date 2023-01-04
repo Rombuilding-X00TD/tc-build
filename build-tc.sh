@@ -79,9 +79,6 @@ tg_post_msg "<b>Building LLVM...</b>"
 msg "Building Binutils..."
 tg_post_msg "<b>Building Binutils...</b>"
 ./build-binutils.py \
-	--ccache \
-	--incremental \
-	--shallow-clone \
 	--build-type "Release"
 
 # Remove unused products
