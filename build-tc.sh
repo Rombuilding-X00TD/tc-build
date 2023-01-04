@@ -60,7 +60,6 @@ tg_post_msg "<b>KryptoNite Clang Compilation Started</b>%0A<b>Vendor : </b><code
 msg "Building LLVM..."
 tg_post_msg "<b>Building LLVM...</b>"
 ./build-llvm.py \
-	--ccache \
 	--incremental \
 	--shallow-clone \
 	--clang-vendor "$LLVM_NAME" \
