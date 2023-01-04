@@ -1,24 +1,29 @@
-name: Clang Latest
+ name: My Workflow
 
-on: 
-  workflow_dispatch:
-  schedule:
-    - cron: '0 0 * * *'
-
-env:
-          LLVM_NAME: ${{ secrets.LLVM_NAME }}
-          GL_TOKEN: ${{ secrets.GH_TOKEN }}
-          GL_PUSH_REPO_URL: ${{ secrets.GL_PUSH_REPO_URL }}
-          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
-          TG_TOKEN: ${{ secrets.TG_TOKEN }}
-          GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
-          GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
+ on:
+    workflow_dispatch:
+    schedule:
+      - cron: '0 0 * * *'
+    
+ env:
+    LLVM_NAME: ${{ secrets.LLVM_NAME }}
+    GL_TOKEN: ${{ secrets.GH_TOKEN }}
+    GL_PUSH_REPO_URL: ${{ secrets.GL_PUSH_REPO_URL }}
+    TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+    TG_TOKEN: ${{ secrets.TG_TOKEN }}
+    GH_USERNAME: ${{ secrets.GH_USERNAME }}
+    GH_EMAIL: ${{ secrets.GH_EMAIL }}
   
-jobs:
+ jobs:
   goBuild:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Setting up Git config
+      run: |
+        git config --global user.name "$GH_USERNAME"
+        git config --global user.email "$GH_EMAIL"
     - name: Building
       run: |
-        bash build-tc.sh
+        sudo apt-get install -y cmake ninja-build python3-pip libffi-dev python3-dev
+        bash build-tc.sh -j $(nproc)
