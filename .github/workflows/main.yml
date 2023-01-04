@@ -7,12 +7,12 @@
     
  env:
     LLVM_NAME: ${{ secrets.LLVM_NAME }}
-    GL_TOKEN: ${{ secrets.GH_TOKEN }}
-    GL_PUSH_REPO_URL: ${{ secrets.GL_PUSH_REPO_URL }}
+    GITLAB_TOKEN_EMAIL: ${{ secrets.GITLAB_TOKEN_EMAIL }}
+    GITLAB_TOKEN_USERNAME: ${{ secrets.GITLAB_TOKEN_USERNAME }}
+    GITLAB_TOKEN_TOKEN: ${{ secrets.GITLAB_TOKEN_TOKEN }}
+    GITLAB_TOKEN_PUSH_REPO_URL: ${{ secrets.GITLAB_TOKEN_PUSH_REPO_URL }}
     TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
     TG_TOKEN: ${{ secrets.TG_TOKEN }}
-    GH_USERNAME: ${{ secrets.GH_USERNAME }}
-    GH_EMAIL: ${{ secrets.GH_EMAIL }}
   
  jobs:
   goBuild:
