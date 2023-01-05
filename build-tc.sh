@@ -79,7 +79,7 @@ tg_post_msg "<b>Building LLVM...</b>"
 msg "Building Binutils..."
 tg_post_msg "<b>Building Binutils...</b>"
 ./build-binutils.py \
-	--build-type "Release"
+	--targets "ARM;AArch64"
 
 # Remove unused products
 rm -fr install/include
