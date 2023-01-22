@@ -10,6 +10,7 @@ import platform
 import re
 import shutil
 import subprocess
+import time
 import utils
 
 
@@ -343,6 +344,8 @@ def build_targets(binutils_folder, build, install_folder, targets, host_arch):
 
 
 def main():
+    script_start = time.time()
+
     root_folder = pathlib.Path(__file__).resolve().parent
 
     args = parse_parameters(root_folder)
@@ -366,6 +369,8 @@ def main():
 
     build_targets(binutils_folder, build_folder, install_folder,
                   create_targets(targets), args.march)
+
+    print(f"\nTotal script duration: {utils.get_duration(script_start)}")
 
 
 if __name__ == '__main__':
