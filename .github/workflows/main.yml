@@ -1,11 +1,11 @@
- name: My Workflow
+name: My Workflow
 
- on:
+on:
     workflow_dispatch:
     schedule:
-      - cron: '0 0 * * *'
+      - cron: '0 0 */2 * *'
     
- env:
+env:
     LLVM_NAME: ${{ secrets.LLVM_NAME }}
     GITLAB_TOKEN_EMAIL: ${{ secrets.GITLAB_TOKEN_EMAIL }}
     GITLAB_TOKEN_USERNAME: ${{ secrets.GITLAB_TOKEN_USERNAME }}
@@ -13,8 +13,8 @@
     GITLAB_TOKEN_PUSH_REPO_URL: ${{ secrets.GITLAB_TOKEN_PUSH_REPO_URL }}
     TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
     TG_TOKEN: ${{ secrets.TG_TOKEN }}
-  
- jobs:
+
+jobs:
   goBuild:
     runs-on: ubuntu-latest
     steps:
@@ -23,6 +23,7 @@
       run: |
         git config --global user.name "$GH_USERNAME"
         git config --global user.email "$GH_EMAIL"
+        git config --global lfs.locksverify true
     - name: Building
       run: |
         sudo apt-get install -y cmake ninja-build python3-pip libffi-dev python3-dev
