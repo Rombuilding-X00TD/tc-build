@@ -20,14 +20,6 @@ err() {
     echo -e "\e[1;41m$*\e[0m"
 }
 
-# Clone source
-git clone --depth=1 https://github.com/ClangBuiltLinux/tc-build clang
-mv github-release clang
-cd clang
-
-# Install dependency
-bash ci.sh deps
-
 # Set a directory
 DIR="$(pwd ...)"
 
@@ -54,32 +46,25 @@ builder_commit="$(git rev-parse HEAD)"
 START=$(date +"%s")
 
 # Send a notificaton to TG
-tg_post_msg "<b>KryptoNite Clang Compilation Started</b>%0A<b>Vendor : </b><code>$LLVM_NAME clang</code>%0A<b>Toolchain Script Commit : </b><code>$builder_commit</code>%0A<b>Build Date : </b><code>$rel_friendly_date</code>"
+tg_post_msg "<b>$LLVM_NAME: Toolchain Compilation Started</b>%0A<b>Date : </b><code>$rel_friendly_date</code>%0A<b>Toolchain Script Commit : </b><code>$builder_commit</code>%0A"
 
 # Build LLVM
-msg "Building LLVM..."
-tg_post_msg "<b>Building LLVM...</b>"
+msg "$LLVM_NAME: Building LLVM..."
+tg_post_msg "<b>$LLVM_NAME: Building LLVM. . .</b>"
 ./build-llvm.py \
-	--incremental \
-	--shallow-clone \
 	--clang-vendor "$LLVM_NAME" \
-	--defines "LLVM_PARALLEL_COMPILE_JOBS=$(nproc) LLVM_PARALLEL_LINK_JOBS=$(nproc) CMAKE_C_FLAGS=-O3 CMAKE_CXX_FLAGS=-O3" \
 	--projects "clang;lld;polly" \
 	--targets "ARM;AArch64" \
-	--build-type "Release" 2>&1 | tee build.log
-
-# Check if the final clang binary exists or not.
-[ ! -f install/bin/clang-1* ] && {
-	err "Building LLVM failed ! Kindly check errors !!"
-	tg_post_build "build.log" "$TG_CHAT_ID" "Error Log"
-	exit 1
-}
+	--shallow-clone \
+	--defines "LLVM_PARALLEL_COMPILE_JOBS=$(nproc) LLVM_PARALLEL_LINK_JOBS=$(nproc) CMAKE_C_FLAGS=-O3 CMAKE_CXX_FLAGS=-O3 LLVM_USE_LINKER=lld LLVM_ENABLE_LLD=ON" \
+	--incremental \
+	--lto full \
+	--build-type "Release"
 
 # Build binutils
-msg "Building Binutils..."
-tg_post_msg "<b>Building Binutils...</b>"
-./build-binutils.py \
-	--targets "ARM;AArch64"
+msg "$LLVM_NAME: Building binutils..."
+tg_post_msg "<b>$LLVM_NAME: Building Binutils. . .</b>"
+./build-binutils.py --targets arm aarch64
 
 # Remove unused products
 rm -fr install/include
@@ -109,7 +94,7 @@ llvm_commit_url="https://github.com/llvm/llvm-project/commit/$short_llvm_commit"
 binutils_ver="$(ls | grep "^binutils-" | sed "s/binutils-//g")"
 clang_version="$(install/bin/clang --version | head -n1 | cut -d' ' -f4)"
 
-tg_post_msg "<b>Pushed to Repository Started...</b>%0A<b>Clang Version : </b><code>$clang_version</code>%0A<b>Binutils Version : </b><code>$binutils_ver</code>%0A<b>LLVM Commit: </b><code>$llvm_commit_url</code>%0A<b>Builder Commit: </b><code>https://github.com/Rombuilding-X00TD/tc-build/commit/$builder_commit</code>%0A<b>KryptoNite Clang Bump to: </b><code>$rel_date build</code>"
+tg_post_msg "<b>$LLVM_NAME: Toolchain compilation Finished</b>%0A<b>Clang Version : </b><code>$clang_version</code>%0A<b>LLVM Commit : </b><code>$llvm_commit_url</code>%0A<b>Binutils Version : </b><code>$binutils_ver</code>"
 
 # Git repository
 git config --global user.email "$GITLAB_TOKEN_EMAIL"
@@ -128,25 +113,8 @@ Clang Version: $clang_version
 Binutils version: $binutils_ver
 Builder commit: https://github.com/Rombuilding-X00TD/tc-build/commit/$builder_commit"
 
-# Downgrade the HTTP version to 1.1
-git config --global http.version HTTP/1.1
-# Increase git buffer size
-git config --global http.postBuffer 55428800
-git lfs migrate import --everything --include="bin/llvm-lto2"
-git lfs migrate import --everything --include="bin/bugpoint"
-git lfs migrate import --everything --include="bin/opt"
-git lfs migrate import --everything --include="bin/clang-15"
-git lfs migrate import --everything --include="bin/clang-scan-deps"
-git lfs migrate import --everything --include="lib/libclang.so.15.0.0git"
-git lfs migrate import --everything --include="bin/clang-repl"
-git lfs migrate import --everything --include="bin/lld"
-git lfs migrate import --everything --include="lib/libclang-cpp.so.15git"
-
 git push -f
 popd || exit
-
-# Set git buffer to original size
-git config --global http.version HTTP/2
 
 END=$(date +"%s")
 DIFF=$(($END - $START))
