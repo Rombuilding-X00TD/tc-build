@@ -52,13 +52,12 @@ tg_post_msg "<b>$LLVM_NAME: Toolchain Compilation Started</b>%0A<b>Date : </b><c
 msg "$LLVM_NAME: Building LLVM..."
 tg_post_msg "<b>$LLVM_NAME: Building LLVM. . .</b>"
 ./build-llvm.py \
+	--incremental \
+	--shallow-clone \
 	--clang-vendor "$LLVM_NAME" \
+	--defines "LLVM_PARALLEL_COMPILE_JOBS=$(nproc) LLVM_PARALLEL_LINK_JOBS=$(nproc) CMAKE_C_FLAGS=-O3 CMAKE_CXX_FLAGS=-O3 LLVM_USE_LINKER=lld LLVM_ENABLE_LLD=ON" \
 	--projects "clang;lld;polly" \
 	--targets "ARM;AArch64" \
-	--shallow-clone \
-	--defines "LLVM_PARALLEL_COMPILE_JOBS=$(nproc) LLVM_PARALLEL_LINK_JOBS=$(nproc) CMAKE_C_FLAGS=-O3 CMAKE_CXX_FLAGS=-O3 LLVM_USE_LINKER=lld LLVM_ENABLE_LLD=ON" \
-	--incremental \
-	--lto full \
 	--build-type "Release"
 
 # Build binutils
