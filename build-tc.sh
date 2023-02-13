@@ -59,7 +59,6 @@ tg_post_msg "<b>$LLVM_NAME: Building LLVM. . .</b>"
 	--projects "clang;lld;polly" \
 	--targets "ARM;AArch64" \
         --pgo "kernel-defconfig" \
-        --lto "full" \
 	--quiet-cmake \
 	--assertions \
 	--build-type "Release"
